@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Write one startup pitch sentence to /output/entry.txt.
+"""One-sentence absurd-invention pitch writer.
 
-The pitch names the odd thing being sold, who pays for it, and why the
-business holds together: naming rights for potholes, sponsored by the
-commuters who hit them, with the city sharing the repair fund.
+Writes one pitch sentence to /output/entry.txt: naming rights to potholes,
+sponsored for $29 a month by the commuters whose tyres the crater ate,
+with the city splitting the repair fund. Ridiculous at first glance, real
+on a second look. The write is atomic and independent of the working
+directory.
 """
+
 import os
 
 PITCH = (
@@ -13,16 +16,20 @@ PITCH = (
     "with us."
 )
 
+OUTPUT_PATH = "/output/entry.txt"
+MAX_CHARS = 200
+
 
 def main() -> None:
-    text = PITCH.strip()
-    if not (1 <= len(text) <= 200) or not text.strip():
-        raise SystemExit("pitch must be 1-200 non-blank characters")
-    os.makedirs("/output", exist_ok=True)
-    tmp = "/output/.entry.txt.tmp"
-    with open(tmp, "w", encoding="utf-8", newline="") as f:
-        f.write(text)
-    os.replace(tmp, "/output/entry.txt")
+    pitch = PITCH.strip()
+    if not pitch or len(pitch) > MAX_CHARS:
+        raise ValueError("pitch must be 1-200 non-blank characters")
+
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    tmp_path = OUTPUT_PATH + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8", newline="") as f:
+        f.write(pitch)
+    os.replace(tmp_path, OUTPUT_PATH)
 
 
 if __name__ == "__main__":
